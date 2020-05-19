@@ -4,14 +4,14 @@ Example:
 
 ```typescript
 class User extends Class {
-    id: UUID
-    username: String.check(x => x.length >= 2)
-    email: String
+    id = UUID;
+    username = String.check(x => x.length >= 2);
+    email = String;
 }
 
 class Point2D extends Class {
-    x: Number;
-    y: Number;
+    x = Number;
+    y = Number;
 }
 
 const user = User.parse(await getUser())
