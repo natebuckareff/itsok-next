@@ -1,0 +1,20 @@
+{
+    "name": "parse",
+    "private": true,
+    "types": "lib/index.d.ts",
+    "main": "lib/index.js",
+    "files": [
+        "/lib",
+        "/src"
+    ],
+    "devDependencies": {
+        "nodemon": "^2.0.4",
+        "ts-node": "^8.10.1",
+        "typescript": "^3.9.2"
+    },
+    "scripts": {
+        "dev": "nodemon --exec ts-node ./test.ts",
+        "build": "tsc",
+        "prepublish": "tsc"
+    }
+}
