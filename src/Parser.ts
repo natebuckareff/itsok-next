@@ -52,6 +52,7 @@ export function unstable_pipe<X, Y, Z>(
     return parser as Parser<X, Z>;
 }
 
+// TODO Should the predicate run after parsing? Probably
 export function unstable_check<I, O>(
     p: Parser<I, O>,
     f: (x: I) => boolean,
