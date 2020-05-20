@@ -1,4 +1,4 @@
-import { EnumParser } from './Spec';
+import { Spec } from './Spec';
 import { Parser, AnyParser } from './Parser';
 
 export interface EnumSchema {
@@ -52,7 +52,7 @@ export class Enum implements EnumSchema {
         this.__parser = parser as any;
 
         const name = (this as any).name;
-        const spec: EnumParser = {
+        const spec: Spec.EnumParser = {
             kind: 'enum',
             name,
             variants: {},

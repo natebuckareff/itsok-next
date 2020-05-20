@@ -1,4 +1,4 @@
-import { Spec, FunctionParser, makeRef, ParserSpec } from './Spec';
+import { Spec, makeRef } from './Spec';
 
 export interface Parser<I, O> {
     (input: I): O;
@@ -18,10 +18,10 @@ export function makeParser<I, O>(
     name: string,
     args: any[],
     fn: (input: I) => O,
-    annotations?: ParserSpec['annotations'],
+    annotations?: Spec.ParserSpec['annotations'],
 ): Parser<I, O> {
     const parser: any = (x: any) => fn(x);
-    const spec: FunctionParser = {
+    const spec: Spec.FunctionParser = {
         kind: 'function',
         name,
         args: [],
