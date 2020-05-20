@@ -1,12 +1,17 @@
 import * as ok from './Primitive';
-import { Class, ClassT } from './Class';
-import { aliasParser } from './Alias';
+import * as util from 'util';
 import { Array } from './Array';
+import { Class, ClassT } from './Class';
+import { Enum } from './Enum';
 import { Tuple } from './Tuple';
 import { Union } from './Union';
-import { Enum } from './Enum';
+import { makeParser, AnyParser } from './Parser';
 
-const ID = aliasParser('ID', [], ok.String, {
+const log = (...args: any[]) => {
+    console.log(...args.map(x => util.inspect(x, true, null)));
+};
+
+const ID = makeParser('ID', [], ok.String, {
     'postgres.type': 'primary_key',
 });
 
@@ -45,3 +50,43 @@ class Option extends Enum {
 const w = Option.parse({ type: 'None' });
 console.log(w);
 console.log(Option.getParser().spec);
+
+const NumberArray1 = makeParser('NumberArray', [], Array(ok.Number), {
+    migrator: {},
+});
+log(NumberArray1.spec);
+
+function Nullable<P extends AnyParser>(parser: P) {
+    return makeParser<P['I'], P['O']>('Nullable', [parser], parser);
+}
+
+function Default<P extends AnyParser>(parser: P, defaultValue: () => P['O']) {
+    return makeParser<P['I'], P['O']>('Default', [], parser, {
+        migrator: { defaultValue },
+    });
+}
+
+function Reference<M extends Class>(cls: new () => M, key: keyof M) {
+    const parser = (cls as any).getParser();
+    return makeParser<unknown, ClassT<M>>('Reference', [cls, key], parser);
+}
+
+const r = Reference(User, 'id');
+log('@', r.spec);
+log('@', User.getParser().spec);
+
+class UserT extends Class {
+    id = ID;
+    username = Default(ok.String, () => '');
+}
+
+class AuthEmailT extends Class {
+    id = ID;
+    email = ok.String;
+    userId = Nullable(Reference(UserT, 'id'));
+    hash = ok.String;
+    salt = ok.String;
+    reps = ok.String;
+}
+
+log(AuthEmailT.getParser().spec);

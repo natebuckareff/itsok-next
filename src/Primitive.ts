@@ -1,5 +1,4 @@
 import { makeParser } from './Parser';
-import { aliasParser } from './Alias';
 
 export function typeOf<T>(typeName: string) {
     return makeParser<unknown, T>('typeOf', [typeName], x => {
@@ -20,11 +19,11 @@ export function objectIs<T>(value: any) {
 }
 
 const to = <T>(name: string, typeName: string) => {
-    return aliasParser(name, [], typeOf<T>(typeName));
+    return makeParser(name, [], typeOf<T>(typeName));
 };
 
 const oi = <T>(name: string, value: any) => {
-    return aliasParser(name, [], objectIs<T>(value));
+    return makeParser(name, [], objectIs<T>(value));
 };
 
 export const Null = oi<null>('Null', null);

@@ -1,4 +1,4 @@
-import { ClassSpec, makeRef } from './Spec';
+import { ClassParser, makeRef } from './Spec';
 import { Parser, AnyParser } from './Parser';
 
 export class Class {
@@ -37,10 +37,10 @@ export class Class {
         }
 
         const parser = (x: unknown) => Class.parse(x);
-        this.__parser = parser;
+        this.__parser = parser as any;
 
         const name = (this as any).name;
-        const spec: ClassSpec = {
+        const spec: ClassParser = {
             kind: 'class',
             name,
             props: {},

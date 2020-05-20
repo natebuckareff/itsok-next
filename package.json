@@ -8,6 +8,7 @@
         "/src"
     ],
     "devDependencies": {
+        "@types/node": "^14.0.4",
         "nodemon": "^2.0.4",
         "ts-node": "^8.10.1",
         "typescript": "^3.9.2"

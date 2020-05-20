@@ -1,7 +1,9 @@
-import { Spec, ParserSpec, makeRef } from './Spec';
+import { Spec, FunctionParser, makeRef, ParserSpec } from './Spec';
 
 export interface Parser<I, O> {
     (input: I): O;
+    readonly I: I;
+    readonly O: O;
     readonly spec: Spec;
 
     // TODO Add fluent combinators
@@ -16,13 +18,17 @@ export function makeParser<I, O>(
     name: string,
     args: any[],
     fn: (input: I) => O,
+    annotations?: ParserSpec['annotations'],
 ): Parser<I, O> {
-    const parser: any = fn;
-    const spec: ParserSpec = {
-        kind: 'parser',
+    const parser: any = (x: any) => fn(x);
+    const spec: FunctionParser = {
+        kind: 'function',
         name,
         args: [],
     };
+    if (annotations !== undefined) {
+        spec.annotations = annotations;
+    }
     for (const arg of args) {
         if (arg !== Object(arg)) {
             spec.args!.push({
@@ -30,9 +36,16 @@ export function makeParser<I, O>(
                 type: typeof arg,
                 value: arg,
             });
+        } else if (typeof arg.getParser === 'function') {
+            const p = arg.getParser() as AnyParser;
+            spec.args!.push(makeRef(p.spec));
+        } else if (typeof arg.spec === 'object') {
+            const p = arg as AnyParser;
+            spec.args!.push(makeRef(p.spec));
         } else {
-            const x = arg as AnyParser;
-            spec.args!.push(makeRef(x.spec));
+            throw new Error(
+                `Invalid parser argument: expected literal or parser`,
+            );
         }
     }
     parser.spec = spec;

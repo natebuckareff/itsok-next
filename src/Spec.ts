@@ -1,37 +1,28 @@
-export type Spec = ParserSpec | ClassSpec | EnumSpec | AliasSpec;
+export type Spec = FunctionParser | ClassParser | EnumParser;
 
 export interface ParserSpec {
-    kind: 'parser';
     name: string;
+    annotations?: {
+        [k: string]: any;
+    };
+}
+
+export interface FunctionParser extends ParserSpec {
+    kind: 'function';
     args: Arg[];
 }
 
-export interface ClassSpec {
+export interface ClassParser extends ParserSpec {
     kind: 'class';
-    name: string;
     props: {
         [k: string]: Ref;
     };
-    annotations?: {
-        [k: string]: any;
-    };
 }
 
-export interface EnumSpec {
+export interface EnumParser extends ParserSpec {
     kind: 'enum';
-    name: string;
     variants: {
         [k: string]: Ref | null;
-    };
-}
-
-export interface AliasSpec {
-    kind: 'alias';
-    name: string;
-    args: Arg[];
-    base: Ref;
-    annotations?: {
-        [k: string]: any;
     };
 }
 
@@ -56,20 +47,15 @@ export type Arg = Ref | Literal;
 export type Ref = ParserRef | AliasRef;
 
 export function makeRef(spec: Spec): Ref {
-    if (spec.kind === 'parser') {
+    if (spec.kind === 'function') {
         return {
             kind: 'parserRef',
             name: spec.name,
             args: spec.args,
         };
-    } else if (spec.kind === 'class') {
-        return {
-            kind: 'parserRef',
-            name: spec.name,
-        };
     } else {
         return {
-            kind: 'aliasRef',
+            kind: 'parserRef',
             name: spec.name,
         };
     }
