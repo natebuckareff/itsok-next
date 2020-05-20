@@ -1,4 +1,4 @@
-export type Spec = ParserSpec | ClassSpec | AliasSpec;
+export type Spec = ParserSpec | ClassSpec | EnumSpec | AliasSpec;
 
 export interface ParserSpec {
     kind: 'parser';
@@ -14,6 +14,14 @@ export interface ClassSpec {
     };
     annotations?: {
         [k: string]: any;
+    };
+}
+
+export interface EnumSpec {
+    kind: 'enum';
+    name: string;
+    variants: {
+        [k: string]: Ref | null;
     };
 }
 
