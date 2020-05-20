@@ -18,6 +18,15 @@ export function objectIs<T>(value: any) {
     });
 }
 
+export function instanceOf<C>(cls: new (...args: any[]) => C) {
+    return makeParser<unknown, typeof cls>('instanceOf', [cls.name], x => {
+        if (x instanceof cls) {
+            return x as any;
+        }
+        throw new Error(`Expected instance of ${cls.name}`);
+    });
+}
+
 const to = <T>(name: string, typeName: string) => {
     return makeParser(name, [], typeOf<T>(typeName));
 };
