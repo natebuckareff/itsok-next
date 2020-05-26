@@ -1,5 +1,5 @@
 {
-    "name": "parse",
+    "name": "itsok",
     "private": true,
     "types": "lib/index.d.ts",
     "main": "lib/index.js",
