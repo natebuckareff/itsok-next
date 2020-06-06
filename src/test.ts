@@ -1,8 +1,7 @@
 import * as ok from './Primitive';
 import * as util from 'util';
 import { Array } from './Array';
-import { Class, ClassT } from './Class';
-import { Enum } from './Enum';
+import { Object, ObjectO } from './Object';
 import { Tuple } from './Tuple';
 import { Union } from './Union';
 import { makeParser, AnyParser } from './Parser';
@@ -15,7 +14,7 @@ const ID = makeParser('ID', [], ok.String, {
     'postgres.type': 'primary_key',
 });
 
-class User extends Class {
+class User extends Object {
     id = ID;
     username = ok.String;
     nothing = ok.Null;
@@ -25,7 +24,7 @@ class User extends Class {
 console.log(User.getParser().spec);
 console.log(ID.spec);
 
-const i: ClassT<User> = {
+const i: ObjectO<User> = {
     id: '42',
     username: 'alice',
     nothing: null,
@@ -43,13 +42,13 @@ const maybe = Union(ok.Boolean, ok.Number);
 const z = maybe(10);
 console.log(z);
 
-class Option extends Enum {
-    Some = ok.String;
-    None = null;
-}
-const w = Option.parse({ type: 'None' });
-console.log(w);
-console.log(Option.getParser().spec);
+// class Option extends Enum {
+//     Some = ok.String;
+//     None = null;
+// }
+// const w = Option.parse({ type: 'None' });
+// console.log(w);
+// console.log(Option.getParser().spec);
 
 const NumberArray1 = makeParser('NumberArray', [], Array(ok.Number), {
     migrator: {},
@@ -66,21 +65,21 @@ function Default<P extends AnyParser>(parser: P, defaultValue: () => P['O']) {
     });
 }
 
-function Reference<M extends Class>(cls: new () => M, key: keyof M) {
+function Reference<M extends Object>(cls: new () => M, key: keyof M) {
     const parser = (cls as any).getParser();
-    return makeParser<unknown, ClassT<M>>('Reference', [cls, key], parser);
+    return makeParser<unknown, ObjectO<M>>('Reference', [cls, key], parser);
 }
 
 const r = Reference(User, 'id');
 log('@', r.spec);
 log('@', User.getParser().spec);
 
-class UserT extends Class {
+class UserT extends Object {
     id = ID;
     username = Default(ok.String, () => '');
 }
 
-class AuthEmailT extends Class {
+class AuthEmailT extends Object {
     id = ID;
     email = ok.String;
     userId = Nullable(Reference(UserT, 'id'));

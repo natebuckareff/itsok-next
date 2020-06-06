@@ -16,10 +16,10 @@ export type AnyParser = Parser<any, any>;
 
 // TODO memoize parsers on `name` and `args`
 export function makeParser<I, O>(
-    name: string,
-    args: any[],
+    _name: string,
+    _args: any[],
     fn: (input: I) => O,
-    annotations?: Spec.ParserSpec['annotations'],
+    _annotations?: Spec.ParserSpec['annotations'],
 ): Parser<I, O> {
     const parser: any = (x: any) => fn(x);
     // const spec: Spec.FunctionParser = {
