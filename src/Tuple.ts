@@ -1,17 +1,19 @@
-import { Parser, AnyParser, makeParser } from './Parser';
+import { EveryParser, EveryParserT, makeParser, parse } from './Parser';
 
-export type TupleT<Ps extends AnyParser[]> = {
-    [K in keyof Ps]: Ps[K] extends Parser<any, infer O> ? O : never;
+export type TupleT<Ps extends EveryParser[]> = {
+    [K in keyof Ps]: Ps[K] extends EveryParser
+        ? EveryParserT<Ps[K]>['O']
+        : never;
 };
 
-export function Tuple<Ps extends AnyParser[]>(...parsers: Ps) {
+export function Tuple<Ps extends EveryParser[]>(...parsers: Ps) {
     return makeParser<unknown, TupleT<Ps>>('Tuple', parsers, tuple => {
         if (Array.isArray(tuple)) {
             if (tuple.length !== parsers.length) {
                 throw new Error(`Tuple with unexpected length ${tuple.length}`);
             }
             for (let i = 0; i < tuple.length; ++i) {
-                parsers[i](tuple[i]);
+                parse(parsers[i], tuple[i]);
             }
             return tuple as any;
         }

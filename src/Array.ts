@@ -1,10 +1,12 @@
-import { Parser, makeParser } from './Parser';
+import { Parser, makeParser, EveryParser, EveryParserT, parse } from './Parser';
 
-function _Array<T>(parser: Parser<unknown, T>): Parser<unknown, T[]> {
+function _Array<P extends EveryParser>(
+    parser: P,
+): Parser<unknown, EveryParserT<P>['O'][]> {
     return makeParser('Array', [parser], array => {
         if (Array.isArray(array)) {
             for (const x of array) {
-                parser(x);
+                parse(parser, x);
             }
             return array;
         }
