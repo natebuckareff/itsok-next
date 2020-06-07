@@ -7,7 +7,7 @@ export interface Parser<I, O> {
     readonly O: O;
     readonly spec: Spec;
 
-    maybe(input: I): Parser<I, O | undefined>;
+    maybe(input: I): O | undefined;
     pipe<T>(p: Parser<O, T>): Parser<I, T>;
 
     // TODO Add fluent combinators
