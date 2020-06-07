@@ -7,6 +7,9 @@ export interface Parser<I, O> {
     readonly O: O;
     readonly spec: Spec;
 
+    maybe(input: I): Parser<I, O | undefined>;
+    pipe<T>(p: Parser<O, T>): Parser<I, T>;
+
     // TODO Add fluent combinators
     // unstable_pipe<T>(p: Parser<O, T>): Parser<I, T>;
     // unstable_check(f: (x: I) => boolean): Parser<I, O>;
@@ -22,6 +25,17 @@ export function makeParser<I, O>(
     _annotations?: Spec.ParserSpec['annotations'],
 ): Parser<I, O> {
     const parser: any = (x: any) => fn(x);
+
+    parser.maybe = (x: any) => {
+        try {
+            return fn(x);
+        } catch (_error) {
+            return undefined;
+        }
+    };
+
+    parser.pipe = (gn: any) => (x: any) => gn(fn(x));
+
     // const spec: Spec.FunctionParser = {
     //     kind: 'function',
     //     name,

@@ -57,8 +57,18 @@ export class ObjectParser {
             return this.__parser;
         }
 
-        const parser = (x: unknown) => this.parse(x, strict);
+        const parser: any = (x: unknown) => this.parse(x, strict);
         this.__parser = parser as any;
+
+        parser.maybe = (x: any) => {
+            try {
+                return this.parse(x);
+            } catch (_error) {
+                return undefined;
+            }
+        };
+
+        parser.pipe = (gn: any) => (x: any) => gn(this.parse(x));
 
         // const name = (this as any).name;
         // const spec: Spec.ClassParser = {

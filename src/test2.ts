@@ -1,9 +1,12 @@
 import { String } from './Primitive';
-import { Enum } from './Enum';
+import { ObjectParser } from './ObjectParser';
 
-const x = Enum({
-    None: null,
-    Some: String,
-});
+class Foo extends ObjectParser {
+    foo = String;
+}
 
-x({ type: 'None' });
+const x = String.maybe(123);
+console.log(x);
+
+const y = Foo.getParser().maybe({ foo: 123 });
+console.log(y);
