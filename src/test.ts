@@ -1,7 +1,7 @@
 import * as ok from './Primitive';
 import * as util from 'util';
 import { Array } from './Array';
-import { Object, ObjectO } from './Object';
+import { ObjectParser, ObjectO } from './ObjectParser';
 import { Tuple } from './Tuple';
 import { Union } from './Union';
 import { makeParser, AnyParser } from './Parser';
@@ -14,7 +14,7 @@ const ID = makeParser('ID', [], ok.String, {
     'postgres.type': 'primary_key',
 });
 
-class User extends Object {
+class User extends ObjectParser {
     id = ID;
     username = ok.String;
     nothing = ok.Null;
@@ -65,7 +65,7 @@ function Default<P extends AnyParser>(parser: P, defaultValue: () => P['O']) {
     });
 }
 
-function Reference<M extends Object>(cls: new () => M, key: keyof M) {
+function Reference<M extends ObjectParser>(cls: new () => M, key: keyof M) {
     const parser = (cls as any).getParser();
     return makeParser<unknown, ObjectO<M>>('Reference', [cls, key], parser);
 }
@@ -74,12 +74,12 @@ const r = Reference(User, 'id');
 log('@', r.spec);
 log('@', User.getParser().spec);
 
-class UserT extends Object {
+class UserT extends ObjectParser {
     id = ID;
     username = Default(ok.String, () => '');
 }
 
-class AuthEmailT extends Object {
+class AuthEmailT extends ObjectParser {
     id = ID;
     email = ok.String;
     userId = Nullable(Reference(UserT, 'id'));

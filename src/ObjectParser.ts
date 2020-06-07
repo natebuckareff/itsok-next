@@ -1,13 +1,13 @@
 import { Parser, AnyParser, parse, EveryParserT, EveryParser } from './Parser';
 
-export class Object {
+export class ObjectParser {
     readonly I: ObjectI<this> = undefined!;
     readonly O: ObjectO<this> = undefined!;
 
-    static __singleton?: Object;
+    static __singleton?: ObjectParser;
     static __parser?: AnyParser;
 
-    static parse<T extends typeof Object>(
+    static parse<T extends typeof ObjectParser>(
         this: T,
         input: any,
         strict = true,
@@ -18,6 +18,10 @@ export class Object {
         const classParser: any = this.__singleton;
 
         for (const k in classParser) {
+            if (k === 'I' || k === 'O') {
+                continue;
+            }
+
             if (classParser.hasOwnProperty(k)) {
                 try {
                     parse(classParser[k], input[k]);
@@ -45,7 +49,7 @@ export class Object {
         return input as any;
     }
 
-    static getParser<T extends typeof Object>(
+    static getParser<T extends typeof ObjectParser>(
         this: T,
         strict = true,
     ): Parser<unknown, ObjectO<InstanceType<T>>> {
@@ -74,13 +78,13 @@ export class Object {
 }
 
 export type ObjectI<T> = {
-    [K in keyof Omit<T, keyof Object>]: T[K] extends EveryParser
+    [K in keyof Omit<T, keyof ObjectParser>]: T[K] extends EveryParser
         ? EveryParserT<T[K]>['I']
         : never;
 };
 
 export type ObjectO<T> = {
-    [K in keyof Omit<T, keyof Object>]: T[K] extends EveryParser
+    [K in keyof Omit<T, keyof ObjectParser>]: T[K] extends EveryParser
         ? EveryParserT<T[K]>['O']
         : never;
 };

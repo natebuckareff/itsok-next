@@ -1,5 +1,5 @@
 import { Spec } from './Spec';
-import { Object, ObjectO } from './Object';
+import { ObjectParser, ObjectO } from './ObjectParser';
 
 export interface Parser<I, O> {
     (input: I): O;
@@ -84,10 +84,10 @@ export function unstable_check<I, O>(
 }
 
 // Type representin function and class parsers
-export type EveryParser = AnyParser | typeof Object;
+export type EveryParser = AnyParser | typeof ObjectParser;
 export type EveryParserT<T extends EveryParser> = T extends AnyParser
     ? T
-    : T extends typeof Object
+    : T extends typeof ObjectParser
     ? Parser<unknown, ObjectO<InstanceType<T>>>
     : never;
 
